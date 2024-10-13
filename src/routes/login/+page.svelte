@@ -3,12 +3,15 @@
   import AuthForm from "$lib/components/Auth/AuthForm.svelte";
   import { loginWithEmailandPassword } from "$lib/firebase/auth.client";
   import messagesStore from "$lib/stores/messages.store";
+  import { afterLogin } from "$lib/helpers/route.helper";
+  import {page} from '$app/stores';
   async function onLogin(event) {
     try {
       const formData = new FormData(event.target);
       const email = formData.get('email');
       const password = formData.get('password');
       const user = await loginWithEmailandPassword(email, password);
+      await afterLogin($page.url, user.uid)
     } catch (err) {
       if(['auth/invalid-email', 
       'auth/user-not-found', 
@@ -30,6 +33,13 @@
 <AuthForm on:submit={onLogin} btnName="Login" />
 <hr />
 <LoginWithGoogle />
+<hr />
+<div class="row">
+  <div class="col">
+    <a href="/forgot-password" class="btn btn-warning w-100">Forgot Password</a>
+
+  </div>
+</div>
 <svelte:head>
   <title>
     Book Lovers - Login Page
